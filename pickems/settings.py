@@ -177,7 +177,11 @@ JWT_AUTH = {
 
 STATIC_URL = '/static/'
 
-try:
-    from pickems.settings_local import *
-except ImportError:
-    raise ImportError('Please create a settings_local.py file to set some default settings')
+if 'TRAVIS' in os.environ:
+    from pickems.settings_travis import *
+else:
+    try:
+        from pickems.settings_local import *
+    except ImportError:
+        raise ImportError('Please create a settings_local.py file to set some default settings')
+
