@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from .serializers import *
 from .models import *
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # Create your views here.
 class PickemsUserViewSet(viewsets.ModelViewSet):
@@ -47,3 +49,9 @@ class NflPlayerViewSet(viewsets.ReadOnlyModelViewSet):
 class NflStatViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = NflStat.objects.all()
     serializer_class = NflStatSerializer
+
+
+@api_view()
+def current_user(request):
+    pickems_user = PickemsUser.objects.get(id=request.user.id)
+    return Response(PickemsUserSerializer(pickems_user).data)

@@ -20,7 +20,7 @@ from api import urls as api_urls
 
 urlpatterns = [
     url(r'^api/admin/', admin.site.urls),
-    url(r'^api/auth', views.obtain_jwt_token),
+    url(r'^api/token', views.obtain_jwt_token),
     url(r'^api/refresh', views.refresh_jwt_token),
     url(r'^api/', include(api_urls))
 ]

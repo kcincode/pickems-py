@@ -12,5 +12,6 @@ router.register(r'nfl-players', NflPlayerViewSet)
 router.register(r'nfl-stats', NflStatViewSet)
 
 urlpatterns = [
+    url(r'users/current', current_user),
     url(r'^', include(router.urls)),
 ]
