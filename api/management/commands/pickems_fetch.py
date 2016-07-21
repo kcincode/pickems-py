@@ -186,8 +186,8 @@ class Command(BaseCommand):
                                 try:
                                     stat = NflStat.objects.get(week=real_week, player=playerObj)
                                     # if player.player.player_id == '00-0026138':
-                                    if phase == 'POST':
-                                        print('        Updating {}'.format(stat))
+                                    # if phase == 'POST':
+                                    #     print('        Updating {}'.format(stat))
                                     # update the stat data
                                     stat.td = player.tds
                                     stat.fg = player.kicking_fpm
@@ -200,8 +200,8 @@ class Command(BaseCommand):
                                 except ObjectDoesNotExist:
                                     # create the stat
                                     # if player.player.player_id == '00-0026138':
-                                    if phase == 'POST':
-                                        print('    Creating stat for {} {}'.format(week, player.player.player_id))
+                                    # if phase == 'POST':
+                                    #     print('    Creating stat for {} {}'.format(week, player.player.player_id))
                                     stat = NflStat.objects.create(
                                         week = real_week,
                                         td = player.tds,
