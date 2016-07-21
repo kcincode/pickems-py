@@ -1,5 +1,4 @@
 from pickems.settings import *
-import sys
 
 APP_URL = 'http://localhost:4200'
 DEBUG = True
