@@ -183,5 +183,5 @@ else:
     try:
         from pickems.settings_local import *
     except ImportError:
-        raise ImportError('Please create a settings_local.py file to set some default settings')
+        pass
 
