@@ -1,9 +1,9 @@
-from almanac.settings import *
+from pickems.settings import *
 import sys
 
 APP_URL = 'http://localhost:4200'
 DEBUG = True
-SECRET_KEY = '+$^1k$ic!&eq!w7l#u&5k5^ob7sn8tdee41_+v!f%h*iv5!zr2'
+SECRET_KEY = 'random-asciiopmzw+$x^%_5+232-zhf$@fui*2$=ew4@1nab48$^!yn^d3)t*'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -14,3 +14,5 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
+JWT_AUTH['JWT_SECRET_KEY'] = '0!sf@$-4^wyiwr%n%_8m+c9kf(u%r6*gl8csk+g)5g$-89w6=5'
