@@ -1,4 +1,5 @@
 env/
+env27/
 local_settings.py
 *.pyc
 __pycache__
