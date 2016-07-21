@@ -1,0 +1,24 @@
+language: python
+python:
+- '2.7'
+  # - "3.2"
+  # - "3.3"
+  # - "3.4"
+  # - "3.5"
+  # - "3.5-dev" # 3.5 development branch
+  # - "nightly" # currently points to 3.6-dev
+services: postgresql
+before_install:
+- export DJANGO_SETTINGS_MODULE=pickems.settings
+- export PYTHONPATH=$HOME/builds/kcin1018/pickems-py
+install: pip install -r requirements.txt
+before_script:
+- psql -c "CREATE DATABASE mydb;" -U postgres
+script: python manage.py test
+deploy:
+  provider: heroku
+  api_key:
+    secure: mDhAeORLMG+ofjEN2PAoa/BEd2AL8ov+j14DHtzD+ozzShdKPLCsddD1RyPtRiKa9ysTAa5EjdkNbeNkBc4XtS7RBb9R4Lvkiz5KR+0c59SVIv7Y8dp0hg0svowgyHJjcxT2L7GiuDTndYcvJdwn0EGSdyx95SDStXzvR0Xbv1el1CN6qeIrl5yv03u4sqSwLyHb+TDla552OmF+mjwbq7c1KcDaVRNlQ1LOs9NQzZX235OrETf7VQbMVEyOlEZ3tf8jXLvaU3SV+yPS3R+r9IDhT2LRRlujfYBdfu7Cqv6WRPqRAhQGQv8AwgGhLeUm8wGvhIYAS0wcVPXAtXmvEfXuZGDOhdPv3HILwOTMBE2+P6X0LMo9L/vaKUpg+DJxUSgmo5ropT4dCu/v/30/zZDnLlCmc0T0EfaW1VidLblVwXDw5ABpk3ZzfrGPRadALaDEIaIcKWJnNLQIt/ZTf2Gr+m1/LBXOQevcyxtFRPNEqyms+bGnN+Ph3DWUebt2b1EU2+vS7pyK8scRcTLOBINWnb3NG9XTAix75dYc+Zs03q8a/QO+ZQJ5ln4bzIRNiEKQxrjnXGbmxtMGyBkZiEd+kMNH+f1L2IGg2X9HvqW3C/4kgpftJiPfWcnys6+1her4s0oklW82Pa8A0nDZq5DBMa8qmH2Ca5yUNYsK6gc=
+  app: pickems-api
+  on:
+    repo: kcin1018/pickems-py

@@ -3,13 +3,13 @@ import sys
 
 APP_URL = 'http://localhost:4200'
 DEBUG = True
-SECRET_KEY = 'random-asciiopmzw+$x^%_5+232-zhf$@fui*2$=ew4@1nab48$^!yn^d3)t*'
+SECRET_KEY = 'opmzw+$x^%_5+232-zhf$@fui*2$=ew4@1nab48$^!yn^d3)t*'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'pickems_dev',
-        'USER': 'root',
-        'PASSWORD': 'secret',
+        'NAME': 'pickems_test',
+        'USER': 'postgres',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': 5432,
     }
