@@ -28,7 +28,10 @@ class BaseCase(APITestCase):
 
         payload = jwt_payload_handler(user)
         token = jwt_encode_handler(payload)
-        self.client.credentials(HTTP_AUTHORIZATION='JWT ' + token)
+        self.client.credentials(
+            HTTP_AUTHORIZATION='JWT ' + token,
+            HTTP_ACCEPT='application/vnd.api+json',
+        )
 
 
     def test_get_endpoints(self):
@@ -56,12 +59,12 @@ class BaseCase(APITestCase):
 
         assert response.status_code == 405
 
-    # def test_patch_endpoint(self):
-    #     # make the request
-    #     self.client.force_authenticate(user=self.user)
-    #     response = self.client.patch('{}/{}'.format(self.url, 1))
+    def test_patch_endpoint(self):
+        # make the request
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch('{}/{}'.format(self.url, 1))
 
-    #     assert response.status_code == 405
+        assert response.status_code == 405
 
     # def test_delete_endpoint(self):
     #     # make the request
