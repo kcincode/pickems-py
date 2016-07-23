@@ -50,15 +50,19 @@ class UsersTest(BaseCase):
         # make sure the user was created
         assert PickemsUser.objects.get(id=data['id'])
 
-    def test_invalid_post_endpoint(self):
-        response = self.client.post(self.url, json.dumps({}), content_type='application/vnd.api+json')
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-        # make sure the user was NOT created (no more than the default number)
-        assert len(PickemsUser.objects.all()) == self.get_number
-
-
     def test_patch_endpoint(self):
+         # make sure user is still there
+        user = PickemsUser.objects.first()
+        assert user
+
+        response = self.client.patch('{}/{}'.format(self.url, user.id), json.dumps(self.put_data), content_type='application/vnd.api+json')
+        assert response.status_code == status.HTTP_200_OK
+
+        updatedUser = PickemsUser.objects.get(id=user.id)
+        for attr in self.attributes:
+            assert getattr(updatedUser, attr, 'not-equal') == self.put_data['data']['attributes'][attr]
+
+    def test_invalid_patch_endpoint(self):
          # make sure user is still there
         user = PickemsUser.objects.first()
         assert user

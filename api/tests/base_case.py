@@ -64,8 +64,11 @@ class BaseCase(APITestCase):
     def test_post_endpoint(self):
         # make the request
         response = self.client.post('{}/{}'.format(self.url, 1))
-
         assert response.status_code == 405
+
+    def test_invalid_post_endpoint(self):
+        response = self.client.post(self.url, json.dumps({}), content_type='application/vnd.api+json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_patch_endpoint(self):
         # make the request
@@ -73,6 +76,10 @@ class BaseCase(APITestCase):
         response = self.client.patch('{}/{}'.format(self.url, 1))
 
         assert response.status_code == 405
+
+    def test_invalid_patch_endpoint(self):
+        response = self.client.patch('{}/{}'.format(self.url, 1), json.dumps({}), content_type='application/vnd.api+json')
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     # def test_delete_endpoint(self):
     #     # make the request
