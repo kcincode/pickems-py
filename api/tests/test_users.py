@@ -62,15 +62,13 @@ class UsersTest(BaseCase):
         for attr in self.attributes:
             assert getattr(updatedUser, attr, 'not-equal') == self.put_data['data']['attributes'][attr]
 
-    def test_invalid_patch_endpoint(self):
-         # make sure user is still there
+    def test_delete_endpoint(self):
+        # make sure user is still there
         user = PickemsUser.objects.first()
         assert user
 
-        response = self.client.patch('{}/{}'.format(self.url, user.id), json.dumps(self.put_data), content_type='application/vnd.api+json')
-        assert response.status_code == status.HTTP_200_OK
+        # make the request
+        response = self.client.delete('{}/{}'.format(self.url, user.id))
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
-        updatedUser = PickemsUser.objects.get(id=user.id)
-        for attr in self.attributes:
-            assert getattr(updatedUser, attr, 'not-equal') == self.put_data['data']['attributes'][attr]
-
+        assert len(PickemsUser.objects.filter(id=user.id)) == 0

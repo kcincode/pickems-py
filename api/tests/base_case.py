@@ -4,6 +4,7 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from api.tests import factories
 from rest_framework_jwt.settings import api_settings
 from rest_framework.utils.serializer_helpers import ReturnList
+from rest_framework import status
 import json
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -18,7 +19,7 @@ class BaseCase(APITestCase):
 
     def setUp(self):
         # create the user for authentication
-        user = factories.PickemsUserFactory(
+        self.user = factories.PickemsUserFactory(
             username='authuser',
             email='authuser@example.com',
             password='testing'
@@ -27,7 +28,7 @@ class BaseCase(APITestCase):
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
-        payload = jwt_payload_handler(user)
+        payload = jwt_payload_handler(self.user)
         token = jwt_encode_handler(payload)
         self.client.credentials(
             HTTP_AUTHORIZATION='JWT ' + token,
@@ -78,12 +79,16 @@ class BaseCase(APITestCase):
         assert response.status_code == 405
 
     def test_invalid_patch_endpoint(self):
-        response = self.client.patch('{}/{}'.format(self.url, 1), json.dumps({}), content_type='application/vnd.api+json')
+        response = self.client.patch('{}/{}'.format(self.url, self.user.id), json.dumps({}), content_type='application/vnd.api+json')
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    # def test_delete_endpoint(self):
-    #     # make the request
-    #     self.client.force_authenticate(user=self.user)
-    #     response = self.client.delete('{}/{}'.format(self.url, 1))
+    def test_delete_endpoint(self):
+        # make the request
+        response = self.client.delete('{}/{}'.format(self.url, 1))
 
-    #     assert response.status_code == 405
+        assert response.status_code == 405
+
+    def test_invalid_delete_endpoint(self):
+        # make the request
+        response = self.client.delete('{}/{}'.format(self.url, -1))
+        assert response.status_code == status.HTTP_404_NOT_FOUND
