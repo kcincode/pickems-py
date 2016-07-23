@@ -11,7 +11,7 @@ class PickemsUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PickemsUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login', 'teams')
+        fields = ('username', 'email', 'first_name', 'last_name', 'teams')
 
     def create(self, validated_data):
         password = self.context['request'].data.get('password')
@@ -31,7 +31,7 @@ class PickemsUserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # do the regular update
-        super(UserSerializer, self).update(instance, validated_data)
+        super(PickemsUserSerializer, self).update(instance, validated_data)
 
         # ensure lowercase email and username
         instance.email = instance.email.lower()
@@ -41,7 +41,6 @@ class PickemsUserSerializer(serializers.ModelSerializer):
         password = self.context['request'].data.get('password')
         if password:
             instance.set_password(password)
-            update_last_login(None, instance)
 
         instance.save()
         return instance
