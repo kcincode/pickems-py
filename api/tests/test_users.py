@@ -8,6 +8,7 @@ class UsersTest(BaseCase):
     __test__ = True
     url = '/api/users'
     attributes = ['username', 'first_name', 'last_name', 'email']
+    relationships = ['teams']
     post_data = {
         'data': {
             'type': 'users',

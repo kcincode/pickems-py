@@ -13,6 +13,7 @@ class BaseCase(APITestCase):
     __test__ = False
     url = ''
     attributes = []
+    relationships = []
     get_number = 5
 
     def setUp(self):
@@ -49,9 +50,16 @@ class BaseCase(APITestCase):
             single_response = self.client.get('{}/{}'.format(self.url, item.get('id')))
             assert single_response.status_code == 200
             assert isinstance(single_response.data, ReturnDict)
+            single_data = json.loads(single_response.content).get('data')
+            print(single_data)
 
             for attribute in self.attributes:
-                assert attribute in single_response.data.keys()
+                print(attribute)
+                assert attribute in single_data['attributes'].keys()
+
+            for relationship in self.relationships:
+                print(relationship)
+                assert relationship in single_data['relationships'].keys()
 
     def test_post_endpoint(self):
         # make the request
