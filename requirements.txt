@@ -4,7 +4,7 @@ Django==1.10
 django-cors-headers==1.1.0
 django-filter==0.13.0
 djangorestframework==3.4.1
-djangorestframework-jsonapi==2.0.1
+-e git+https://github.com/django-json-api/django-rest-framework-json-api.git@c93dea1388c18e2b1314b91b0e04fcf4168f84da#egg=djangorestframework_jsonapi
 djangorestframework-jwt==1.8.0
 factory-boy==2.7.0
 fake-factory==0.5.10
