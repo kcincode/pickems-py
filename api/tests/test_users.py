@@ -23,6 +23,7 @@ class UsersTest(BaseCase):
     }
     put_data = {
         'data': {
+            'id': None,
             'type': 'users',
             'attributes': {
                 'username': 'newuser2',
@@ -55,7 +56,10 @@ class UsersTest(BaseCase):
         user = PickemsUser.objects.first()
         assert user
 
-        response = self.client.patch('{}/{}'.format(self.url, user.id), json.dumps(self.put_data), content_type='application/vnd.api+json')
+        put_data = self.put_data
+        put_data['data']['id'] = user.id
+
+        response = self.client.patch('{}/{}'.format(self.url, user.id), json.dumps(put_data), content_type='application/vnd.api+json')
         assert response.status_code == status.HTTP_200_OK
 
         updatedUser = PickemsUser.objects.get(id=user.id)
