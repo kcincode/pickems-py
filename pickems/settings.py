@@ -134,12 +134,13 @@ REST_FRAMEWORK = {
         'rest_framework_json_api.pagination.PageNumberPagination',
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework_json_api.parsers.JSONParser',
-        # 'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.FormParser',
         # 'rest_framework.parsers.MultiPartParser'
     ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework_json_api.renderers.JSONRenderer',
+        'rest_framework.renderers.JSONRenderer',
         # 'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_METADATA_CLASS': 'rest_framework_json_api.metadata.JSONAPIMetadata',
@@ -156,7 +157,6 @@ REST_FRAMEWORK = {
         'rest_framework_json_api.renderers.JSONRenderer',
     ),
 }
-
 
 
 JWT_AUTH = {

@@ -6,6 +6,4 @@ def jwt_response_payload_handler(token, user=None, request=None):
         if user.last_login:
             update_last_login(None, user)
 
-    return {
-        'token': token
-    }
+    return {'access_token': token}

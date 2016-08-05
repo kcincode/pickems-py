@@ -50,7 +50,6 @@ class NflStatViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = NflStat.objects.all()
     serializer_class = NflStatSerializer
 
-
 @api_view()
 def current_user(request):
     pickems_user = PickemsUser.objects.get(id=request.user.id)
