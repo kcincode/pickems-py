@@ -178,6 +178,9 @@ JWT_AUTH = {
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
 }
 
+JSON_API_FORMAT_KEYS = 'dasherize'
+JSON_API_FORMAT_TYPES = 'dasherize'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 

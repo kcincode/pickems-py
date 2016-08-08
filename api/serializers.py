@@ -11,7 +11,7 @@ class PickemsUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PickemsUser
-        fields = ('username', 'email', 'first_name', 'last_name', 'teams')
+        fields = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'teams')
 
     def create(self, validated_data):
         password = self.context['request'].data.get('password')
