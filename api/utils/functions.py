@@ -1,8 +1,12 @@
 import datetime
-from api.models import NflGame, TeamPick
+from api.models import NflGame, TeamPick, Team
 from django.db.models import Q
 
 def validate_picks(team_id):
+    if not team_id.isdigit():
+        team = Team.objects.get(slug=team_id)
+        team_id = team.id
+
     picks_left = {
         'QB': 8,
         'RB': 8,
@@ -21,15 +25,15 @@ def validate_picks(team_id):
     for pick in TeamPick.objects.filter(team=team_id).order_by('week'):
         pick_type = 'player' if pick.pick and pick.pick.player else 'team'
 
+        # clear out any errors
+        pick.valid = True
+        pick.reason = None
+
         if pick.pick.player:
             # pick is a player
             pick_type = 'player'
             position = get_position(pick.pick.player)
             team = pick.pick.player.team.abbr
-
-            # clear out the data
-            pick.valid = True
-            pick.reason = None
 
             # validate pick based on game time
             game = NflGame.objects.filter(Q(home_team=pick.pick.player.team) | Q(away_team=pick.pick.player.team), week=pick.week, type='REG').first()
@@ -71,8 +75,10 @@ def validate_picks(team_id):
                 pick.valid = False
                 pick.reason = 'You have already picked from {}'.format(team.conference)
 
-        # update picked time
-        pick.picked_at = now
+            # update counts if valid
+            if pick.valid:
+                conferences_picked.append(team.conference)
+
         pick.save()
 
 def get_position(player):

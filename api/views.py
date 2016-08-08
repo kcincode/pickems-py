@@ -144,6 +144,9 @@ def picks_view(request):
         'nfc': 1
     }
 
+    validate_picks(team)
+
+
     all_teams_picked = []
     team_picks = TeamPick.objects.filter(team__slug=team)
     for pick in team_picks:
@@ -162,20 +165,20 @@ def picks_view(request):
                 pick_id = False
 
             if pick_id:
-                pickData = {
+                pick_data = {
                     'selected': {'id': pick_id, 'text': pick_text, 'available': pick_available, 'type': pick_type},
                     'id': pick_id,
                     'type': pick_type,
-                    'valid': pick.valid,
+                    'valid': pick_available,
                     'reason': pick.reason,
                     'playmaker': pick.playmaker,
                     'disabled': False
                 }
 
                 if pick.number == 1:
-                    pick1 = pickData
+                    pick1 = pick_data
                 else:
-                    pick2 = pickData
+                    pick2 = pick_data
 
         if pick.pick.player:
             all_teams_picked.append(pick.pick.player.team.abbr)

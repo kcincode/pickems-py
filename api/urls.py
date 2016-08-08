@@ -16,5 +16,5 @@ urlpatterns = [
     url(r'picks-filter', picks_filter),
     url(r'team-picks', update_team_picks),
     url(r'picks', picks_view),
-    url(r'^', include(router.urls)),
+    url(r'^', include(router.urls))
 ]
