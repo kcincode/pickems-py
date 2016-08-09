@@ -7,15 +7,15 @@ from api.models import PickemsUser
 class UsersTest(BaseCase):
     __test__ = True
     url = '/api/users'
-    attributes = ['username', 'first_name', 'last_name', 'email']
+    attributes = ['username', 'first-name', 'last-name', 'email']
     relationships = ['teams']
     post_data = {
         'data': {
             'type': 'users',
             'attributes': {
                 'username': 'newuser',
-                'first_name': 'New',
-                'last_name': 'User',
+                'first-name': 'New',
+                'last-name': 'User',
                 'email': 'newuser@example.com',
                 'password': 'testing',
             }
@@ -27,8 +27,8 @@ class UsersTest(BaseCase):
             'type': 'users',
             'attributes': {
                 'username': 'newuser2',
-                'first_name': 'New2',
-                'last_name': 'User2',
+                'first-name': 'New2',
+                'last-name': 'User2',
                 'email': 'newuser2@example.com',
                 'password': 'testing2'
             }
@@ -64,7 +64,7 @@ class UsersTest(BaseCase):
 
         updatedUser = PickemsUser.objects.get(id=user.id)
         for attr in self.attributes:
-            assert getattr(updatedUser, attr, 'not-equal') == self.put_data['data']['attributes'][attr]
+            assert getattr(updatedUser, attr.replace('-', '_'), 'not-equal') == self.put_data['data']['attributes'][attr]
 
     def test_delete_endpoint(self):
         # make sure user is still there
