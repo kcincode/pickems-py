@@ -90,6 +90,8 @@ class Command(BaseCommand):
 
                         try:
                             stat = NflStat.objects.get(week=week, team=home_team.abbr)
+                        except MultipleObjectsReturned:
+                            print('{}: {}'.format(week, home_team.abbr))
                         except ObjectDoesNotExist:
                             stat = NflStat.objects.create(
                                 week = week,
