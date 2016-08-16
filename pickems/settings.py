@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'random-ascii')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', False)
 
 APPEND_SLASH = False
 ALLOWED_HOSTS = ['*']
@@ -188,6 +188,8 @@ STATIC_URL = '/static/'
 
 if 'TRAVIS' in os.environ:
     from pickems.settings_travis import *
+elif 'OPENSHIFT_APP_NAME' in os.environ:
+    from pickems.settings_openshift import *
 else:
     try:
         from pickems.settings_local import *

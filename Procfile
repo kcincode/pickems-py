@@ -1,1 +1,1 @@
-web: gunicorn pickems.wsgi --log-file -
+web: gunicorn pickems.wsgi -w 3 --log-file -
