@@ -9,7 +9,7 @@ from django.db import connection
 from django.contrib.auth.models import User
 from api.models import *
 import random
-
+from datetime import date, timedelta
 
 class Command(BaseCommand):
     help = 'Populates the database with test data'
@@ -98,6 +98,9 @@ class Command(BaseCommand):
 
     def make_pick(self, team, week, number):
         random.seed()
+
+        first_game = NflGame.objects.filter(week=week).order_by('starts_at').first()
+        pick_date_time = first_game.starts_at - timedelta(days=2)
         # print('    Team: {}, Week: {}, Number: {}'.format(team.id, week, number))
 
         can_pick_teams = bool([conference for conference in self.teams_left.values() if conference != 0])
@@ -195,10 +198,24 @@ class Command(BaseCommand):
             playmaker=playmaker,
             valid=True,
             reason='',
-            picked_at=datetime.now(),
+            picked_at=pick_date_time,
             pick=pick
         )
         teamPick.save()
+
+    def create_storylines(self):
+        user = PickemsUser.objects.get(id=1)
+
+        for week in range(1, 18):
+            week_game = NflGame.objects.filter(week=week).order_by('starts_at').first()
+            posted_date = week_game.starts_at - timedelta(days=2)
+
+            Storyline.objects.create(
+                user=user,
+                week=week,
+                story='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean at malesuada tellus, sed aliquet velit. Proin cursus metus eros, ac vehicula lorem lobortis nec. Etiam mollis urna risus, eget faucibus nulla commodo eget. Vestibulum auctor semper nibh et iaculis. Vestibulum aliquam varius lorem, id porttitor risus cursus eu. Maecenas dictum ut dolor condimentum euismod. Integer lectus orci, aliquet vitae lobortis et, fringilla eu ante. Curabitur venenatis urna ligula, et dignissim neque volutpat eu. Cras in lacus aliquam, euismod orci a, tincidunt eros. Praesent urna tortor, luctus vitae ex eget, euismod vestibulum ex. Phasellus interdum cursus diam, at mattis odio fermentum sit amet.',
+                posted_at=posted_date
+            )
 
     def show_progress(self):
         sys.stdout.write('.')
@@ -227,6 +244,11 @@ class Command(BaseCommand):
         User.objects.filter(id__gt=1).delete()
         self.show_progress()
         cursor.execute('ALTER SEQUENCE auth_user_id_seq RESTART WITH 2')
+        self.show_progress()
+
+        Storyline.objects.all().delete()
+        self.show_progress()
+        cursor.execute('ALTER SEQUENCE api_storyline_id_seq RESTART WITH 1')
         self.show_progress()
 
         print('Done.')

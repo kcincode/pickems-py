@@ -84,16 +84,15 @@ def current_user(request):
 
 @api_view()
 def picks_view(request):
+    read_only = request.GET.get('read_only', False)
     week = request.GET.get('week', 1)
-    slug = request.GET.get('team')
+    team = request.GET.get('team')
+    now = datetime.datetime.now()
 
-    # make sure the team is the users
-    for team in request.user.teams.all():
-        if slug == team.slug:
-            team = slug
-
-    if not team:
-        return JsonResponse({'errors': [{'code': 400, 'title': 'You do not have access to that team'}]}, status=400)
+    # make sure that if it is not read_only then forbidden
+    team_object = Team.objects.get(slug=team)
+    if not read_only and team_object.user.id != request.user.id:
+        return JsonResponse({'errors': [{'code': 403, 'title': 'You do not have access to that team'}]}, status=403)
 
     schedule = {}
     for game in NflGame.objects.filter(week=week).order_by('starts_at'):
@@ -146,6 +145,13 @@ def picks_view(request):
 
     validate_picks(team)
 
+    if not team and read_only:
+        # find closest game and see if the the request is for an invalid week
+        current_game = NflGame.objects.filter(starts_at__gte=now).order_by('starts_at').first()
+        if current_game and current_game.week <= 17 and current_game.week <= week:
+            return JsonResponse({'errors': [{'code': 403, 'title': 'You do not have access to that week'}]}, status=403)
+
+    first_game = NflGame.objects.filter(week=week).order_by('starts_at').first()
 
     all_teams_picked = []
     team_picks = TeamPick.objects.filter(team__slug=team)
@@ -172,7 +178,7 @@ def picks_view(request):
                     'valid': pick_available,
                     'reason': pick.reason,
                     'playmaker': pick.playmaker,
-                    'disabled': False
+                    'disabled': first_game.starts_at < now
                 }
 
                 if pick.number == 1:
@@ -251,6 +257,11 @@ def update_team_picks(request):
 
     if not week or not number or not team:
         return JsonResponse({'errors': [{'code': 400, 'title': 'Missing data'}]}, status=400)
+
+    # make sure that if it is not read_only then forbidden
+    team_object = Team.objects.get(id=team)
+    if team_object.user.id != request.user.id:
+        return JsonResponse({'errors': [{'code': 403, 'title': 'You do not have access to that team'}]}, status=403)
 
     team_pick = TeamPick.objects.filter(week=week, number=number, team=team).first()
     if value:

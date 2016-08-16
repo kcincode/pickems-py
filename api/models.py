@@ -149,3 +149,30 @@ class Storyline(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(self.week, self.story)
+
+
+class TeamWinLoss(models.Model):
+    team = models.ForeignKey(Team, related_name='wl')
+    wl = models.DecimalField(max_digits=4, decimal_places=3)
+
+class TeamRankings(models.Model):
+    rank = models.IntegerField()
+    category = models.CharField(max_length=10, default='bronze')
+    team = models.ForeignKey(Team, related_name='rank')
+    points = models.IntegerField()
+    playoff = models.IntegerField()
+
+class WeekLeaders(models.Model):
+    week = models.IntegerField()
+    team = models.ForeignKey(Team, related_name='weekly')
+    points = models.IntegerField()
+
+class BestPossible(models.Model):
+    week = models.IntegerField()
+    pick1 = models.ForeignKey(NflStat, related_name='best1')
+    pick1_points = models.IntegerField()
+    pick1_playmaker = models.BooleanField()
+    pick2 = models.ForeignKey(NflStat, related_name='best2')
+    pick2_points = models.IntegerField()
+    pick2_playmaker = models.BooleanField()
+    total = models.IntegerField()

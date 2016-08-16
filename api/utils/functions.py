@@ -2,7 +2,7 @@ import datetime
 from api.models import NflGame, TeamPick, Team
 from django.db.models import Q
 
-def validate_picks(team_id):
+def validate_picks(team_id, validateTime=True):
     if not team_id.isdigit():
         team = Team.objects.get(slug=team_id)
         team_id = team.id
@@ -20,8 +20,6 @@ def validate_picks(team_id):
     teams_picked = []
     conferences_picked = []
 
-    now = datetime.datetime.now()
-
     for pick in TeamPick.objects.filter(team=team_id).order_by('week'):
         pick_type = 'player' if pick.pick and pick.pick.player else 'team'
 
@@ -35,11 +33,12 @@ def validate_picks(team_id):
             position = get_position(pick.pick.player)
             team = pick.pick.player.team.abbr
 
-            # validate pick based on game time
-            game = NflGame.objects.filter(Q(home_team=pick.pick.player.team) | Q(away_team=pick.pick.player.team), week=pick.week, type='REG').first()
-            if game and game.starts_at < now:
-                pick.valid = False
-                pick.reason = 'Your pick was after the game had started'
+            if validateTime:
+                # validate pick based on game time
+                game = NflGame.objects.filter(Q(home_team=pick.pick.player.team) | Q(away_team=pick.pick.player.team), week=pick.week, type='REG').first()
+                if game and game.starts_at < pick.picked_at:
+                    pick.valid = False
+                    pick.reason = 'Your pick was after the game had started'
 
             # validate playmaker
             if pick.playmaker and picks_left['playmakers'] < 1:
@@ -64,11 +63,12 @@ def validate_picks(team_id):
             pick_type = 'team'
             team = pick.pick.team
 
-            # validate pick based on game time
-            game = NflGame.objects.filter(Q(home_team=team) | Q(away_team=team), week=pick.week, type='REG').first()
-            if game and game.starts_at < now:
-                pick.valid = False
-                pick.reason = 'Your pick was after the game had started'
+            if validateTime:
+                # validate pick based on game time
+                game = NflGame.objects.filter(Q(home_team=team) | Q(away_team=team), week=pick.week, type='REG').first()
+                if game and game.starts_at < pick.picked_at:
+                    pick.valid = False
+                    pick.reason = 'Your pick was after the game had started'
 
             # validate conference
             if team.conference in conferences_picked:
@@ -88,3 +88,19 @@ def get_position(player):
         return 'WRTE'
     else:
         return player.position.upper()
+
+def team_points(team, up_to_week):
+    points = 0
+    for pick in TeamPick.objects.filter(team=team, week__lt=up_to_week):
+        points += stat_points(pick.pick, pick.playmaker)
+
+    return points
+
+def pick_points(pick):
+    return stat_points(pick.pick, pick.playmaker)
+
+
+def stat_points(stat, playmaker):
+    multiplier = 2 if playmaker else 1
+
+    return ((stat.td * 6) + (stat.fg * 3) + (stat.xp * 1) + (stat.two * 2) + stat.diff) * multiplier
